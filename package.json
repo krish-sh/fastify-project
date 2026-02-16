@@ -17,7 +17,8 @@
     "dotenv": "^17.3.1",
     "fastify": "^5.7.4",
     "git": "^0.1.5",
-    "gitinit": "^1.0.1"
+    "gitinit": "^1.0.1",
+    "mongoose": "^9.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
