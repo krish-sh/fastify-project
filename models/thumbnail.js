@@ -1,14 +1,11 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
-  {
-    name: { type: String, require: true },
-    email: { type: String, require: true, unique: true },
-    password: { type: String, require: true },
-    reserPasswordToken: String,
-    reserPasswordExpiry: Date,
-  },
-  { timestamps: true }
-);
+const thumbnailSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  videoName: { type: String, required: true },
+  version: { type: String },
+  image: { type: String, required: true },
+  paid: { type: String, default: false },
+});
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Thumbnail", thumbnailSchema);
