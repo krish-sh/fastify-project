@@ -22,7 +22,13 @@ fastify.register(require("@fastify/env"), {
 
 // register custom plugin
 
-fastify.register(require("./plugins/mongodb"))
+fastify.register(require("./plugins/mongodb"));
+fastify.register(require("./plugins/jwt"));
+
+// register routes
+
+fastify.register(require("./routes/auth"), { prefix: "/api/auth" });
+
 
 
 // Declare a route
@@ -32,37 +38,37 @@ fastify.get("/", function (request, reply) {
 
 // test database connection
 
-fastify.get("/test-db", async(request, reply) => {
+fastify.get("/test-db", async (request, reply) => {
   try {
-    const mongoose = fastify.mongoose
-    const connectState = mongoose.connection.readyState
+    const mongoose = fastify.mongoose;
+    const connectState = mongoose.connection.readyState;
 
-    let status = ""
+    let status = "";
     switch (connectState) {
       case 0:
-        status = "disconnected"
+        status = "disconnected";
         break;
       case 1:
-        status = "connected"
+        status = "connected";
         break;
       case 2:
         status = "connecting";
         break;
       case 3:
-        status = "disconnecting"
+        status = "disconnecting";
         break;
-    
+
       default:
-        status = "unknown"
+        status = "unknown";
         break;
     }
-    reply.send({database: status})
+    reply.send({ database: status });
   } catch (error) {
-    fastify.log.error(error)
-    reply.status(500).send({error: "Failed to test database"})
-    fastify.exit(1)
+    fastify.log.error(error);
+    reply.status(500).send({ error: "Failed to test database" });
+    fastify.exit(1);
   }
-})
+});
 
 const start = async () => {
   try {
