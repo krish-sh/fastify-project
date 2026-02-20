@@ -88,21 +88,57 @@ exports.updateThumbnail = async (request, reply) => {
   }
 };
 
-exports.DeleteThumbnail = async (request, reply) => {
+exports.deleteThumbnail = async (request, reply) => {
   try {
-    const updatedData = request.body;
-    const thumbnail = await Thumbnail.findByIdAndUpdate(
-      {
-        _id: request.params.id,
-        user: request.user.id,
-      },
-      updatedData,
-      { new: true }
-    );
+    const thumbnail = await Thumbnail.findByIdAndDelete({
+      _id: request.params.id,
+      user: request.params.id,
+    });
+
     if (!thumbnail) {
       return reply.notFound("Thumbnail not found");
     }
-    reply.send(thumbnail);
+
+    const filepath = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "thumbnails",
+      path.basename(thumbnail.image)
+    );
+    fs.unlink(filepath, (err) => {
+      if (err) {
+        fastify.log.error(err);
+      }
+    });
+
+    reply.send({ message: "Thumbnail deleted" });
+  } catch (error) {
+    reply.send(error);
+  }
+};
+
+exports.deleteallThumbnail = async (request, reply) => {
+  try {
+    const thumbnails = await Thumbnail.find({ user: request.user.id });
+    await Thumbnail.deleteMany({ user: request.user.id });
+
+    for (const thumbnail of thumbnails) {
+      const filepath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "thumbnails",
+        path.basename(thumbnail.image)
+      );
+      fs.unlink(filepath, (err) => {
+        if (err) {
+          fastify.log.error(err);
+        }
+      });
+    }
+
+    reply.send({ message: "All Thumbnails deleted" });
   } catch (error) {
     reply.send(error);
   }
