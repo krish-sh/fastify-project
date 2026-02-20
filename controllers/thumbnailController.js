@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const { pipeline } = require("stream");
 const util = require("util");
+const { request } = require("http");
 
 const pipelineAsync = util.promisify(pipeline);
 
@@ -36,8 +37,17 @@ exports.createThumbnail = async (request, reply) => {
       paid: feilds.paid === "true",
     });
 
-    await thumbnail.save()
-    reply.code(201).send(thumbnail)
+    await thumbnail.save();
+    reply.code(201).send(thumbnail);
+  } catch (error) {
+    reply.send(error);
+  }
+};
+
+exports.getThumbnails = async (request, reply) => {
+  try {
+    const thumbnails = await Thumbnail.find({ user: request.user.id });
+    reply.send(thumbnails);
   } catch (error) {
     reply.send(error);
   }
