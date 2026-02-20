@@ -52,3 +52,58 @@ exports.getThumbnails = async (request, reply) => {
     reply.send(error);
   }
 };
+
+exports.getThumbnail = async (request, reply) => {
+  try {
+    const thumbnail = await Thumbnail.findOne({
+      _id: request.params.id,
+      user: request.user.id,
+    });
+    if (!thumbnail) {
+      return reply.notFound("Thumbnail not found");
+    }
+    reply.send(thumbnail);
+  } catch (error) {
+    reply.send(error);
+  }
+};
+
+exports.updateThumbnail = async (request, reply) => {
+  try {
+    const updatedData = request.body;
+    const thumbnail = await Thumbnail.findByIdAndUpdate(
+      {
+        _id: request.params.id,
+        user: request.user.id,
+      },
+      updatedData,
+      { new: true }
+    );
+    if (!thumbnail) {
+      return reply.notFound("Thumbnail not found");
+    }
+    reply.send(thumbnail);
+  } catch (error) {
+    reply.send(error);
+  }
+};
+
+exports.DeleteThumbnail = async (request, reply) => {
+  try {
+    const updatedData = request.body;
+    const thumbnail = await Thumbnail.findByIdAndUpdate(
+      {
+        _id: request.params.id,
+        user: request.user.id,
+      },
+      updatedData,
+      { new: true }
+    );
+    if (!thumbnail) {
+      return reply.notFound("Thumbnail not found");
+    }
+    reply.send(thumbnail);
+  } catch (error) {
+    reply.send(error);
+  }
+};
